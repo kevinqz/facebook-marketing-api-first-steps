@@ -1,9 +1,14 @@
 # Regex, for name search (Campaigns, Ad Sets, Ads)
 # import regex
 
+import getpass
+user = getpass.getuser()
+path = '/Users/' + user + '/Desktop/'
+print('Selected path for your my_facebook_access.py:', path)
+
 # Importing my_facebook_access.py file where I store my private informations:
 import sys
-sys.path.append('/Users/kevinqz/Desktop')
+sys.path.append(path)
 from my_facebook_access import my_app_id, my_app_secret, my_access_token, my_business_id, campaigns_group
 
 from datetime import date
