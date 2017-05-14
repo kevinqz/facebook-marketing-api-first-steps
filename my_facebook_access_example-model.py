@@ -10,6 +10,7 @@ my_app_id = 'YOUR_APP_ID'
 my_app_secret = 'YOUR_APP_SECRET'
 my_access_token = 'YOUR_ACCESS_TOKEN'
 my_business_id = 'YOUR_BUSINESS_ID'
+my_adaccount_id = 'YOUR_ADACCOUNT_ID'
 campaigns_group =   ['YOUR_CAMPAIGN_ID_1', # Campaign Id 1
                      'YOUR_CAMPAIGN_ID_2', # Campaign Id 2
                      'YOUR_CAMPAIGN_ID_3'] # Campaign Id 3

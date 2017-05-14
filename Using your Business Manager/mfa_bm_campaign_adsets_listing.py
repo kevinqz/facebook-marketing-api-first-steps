@@ -27,8 +27,8 @@ my_business = Business(fbid=my_business_id)
 # print("my_business:", my_business)
 my_accounts = list(my_business.get_assigned_ad_accounts())
 # print("All accounts:", my_accounts)
-selected_account = my_accounts[1]
-# print("Selected account:", selected_account)
+selected_adaccount = my_accounts[1]
+# print("Selected Ad Account:", selected_adaccount)
 
 campaign_fields = [
     Campaign.Field.id,
@@ -37,11 +37,11 @@ campaign_fields = [
     Campaign.Field.status
 ]
 
-# Importing a list of Campaigns' Id.
+# Import a list of Campaigns' Id.
 # Create your list by listing your Campaign Ids
-# in the campaigns_group var located on your my_facebook_access.py,
+# in the campaigns_group var located in your my_facebook_access.py,
 # which should be located on your Desktop (see README.md).
-# Also, you can just create a list var of Campaign Ids directly here.
+# Also, you can just create a list var of Campaign Ids directly here, in this file.
 selected_campaigns = campaigns_group
 
 for each_campaign in selected_campaigns:

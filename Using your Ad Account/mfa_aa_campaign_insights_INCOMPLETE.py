@@ -1,5 +1,6 @@
 from facebookads.api import FacebookAdsApi
 from facebookads.adobjects.business import Business
+from facebookads.adobjects.adaccount import AdAccount
 from facebookads.adobjects.campaign import Campaign
 from facebookads.adobjects.adset import AdSet
 from facebookads.adobjects.ad import Ad
@@ -17,21 +18,16 @@ print('Selected path for your my_facebook_access.py:', path)
 # where you have to store your Facebook private information (see README.md):
 import sys
 sys.path.append(path)
-from my_facebook_access import my_app_id, my_app_secret, my_access_token, my_business_id
+from my_facebook_access import my_app_id, my_app_secret, my_access_token, my_adaccount_id, campaigns_group
 
 # print("my_app_id:", my_app_id)
 # print("my_app_secret:", my_app_secret)
 # print("my_access_token:", my_access_token)
 FacebookAdsApi.init(my_app_id, my_app_secret, my_access_token)
-my_business = Business(fbid=my_business_id)
-# print("my_business:", my_business)
-my_accounts = list(my_business.get_assigned_ad_accounts())
-# print("All accounts:", my_accounts)
 
-selected_adaccount = my_accounts[0]
+selected_adaccount = AdAccount(fbid=my_adaccount_id)
 print("Selected Ad Account:", selected_adaccount)
 
-"""
 fields = [
     AdsInsights.Field.campaign_name,
     AdsInsights.Field.cpc,
@@ -51,4 +47,3 @@ params = {
 
 insights = selected_adaccount.get_insights(fields=fields, params=params)
 print(insights)
-"""

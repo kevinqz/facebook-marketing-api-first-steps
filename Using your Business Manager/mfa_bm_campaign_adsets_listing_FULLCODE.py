@@ -31,12 +31,12 @@ my_business = Business(fbid=my_business_id)
 # print("my_business:", my_business)
 my_accounts = list(my_business.get_assigned_ad_accounts())
 # print("All accounts:", my_accounts)
-selected_account = my_accounts[1]
-# print("Selected account:", selected_account)
+selected_adaccount = my_accounts[1]
+# print("Selected Ad Account:", selected_adaccount)
 
 # Use the code bellow to list all Campaigns in your selected Ad Account (selected_account):
 """
-all_campaigns = list(selected_account.get_campaigns())
+all_campaigns = list(selected_adaccount.get_campaigns())
 print("All campaigns:", all_campaigns[])
 """
 
