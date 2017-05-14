@@ -7,20 +7,16 @@ from facebookads.adobjects.adsinsights import AdsInsights
 
 from datetime import date
 
-# Regex, for name search (Campaigns, Ad Sets, Ads)
-# import regex
-
-# Importing getpass module to automatically discover my user:
+# Import getpass module to automatically discover my user:
 import getpass
 user = getpass.getuser()
 path = '/Users/' + user + '/Desktop/'
 print('Selected path for your my_facebook_access.py:', path)
 
-# Importing my_facebook_access.py file,
-# where I store my Facebook private information, located on the Desktop:
+# Import my_facebook_access.py file, located on your Desktop,
+# where you have to store your Facebook private information (see README.md):
 import sys
 sys.path.append(path)
-# sys.path.insert(0,'..')
 from my_facebook_access import my_app_id, my_app_secret, my_access_token, my_business_id, campaigns_group
 
 # print("my_app_id:", my_app_id)
