@@ -1,3 +1,8 @@
+# Without my_facebook_access.py file,
+# on this file you need to insert your Facebook private information.
+# Please see the file mfa_bm_campaign_insights.py to access in a fast way
+# if you have the my_facebook_access.py file setted in your Desktop.
+
 from facebookads.api import FacebookAdsApi
 from facebookads.adobjects.business import Business
 from facebookads.adobjects.campaign import Campaign
