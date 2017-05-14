@@ -1,8 +1,10 @@
+# First of all, remove the "_example-model" on the file name by renaming it to just my_facebook_access.py
+
 # This code is used for some of our examples, so please download,
-# add your Facebook's private information on the appropriate parameters
+# add your Facebook private information on the appropriate parameters
 # and place it in your Desktop
 
-# Note that I'm using Business Manager and pre-selected Campaign Ids
+# Note that I'm using Business Manager and pre-selected Campaign Ids!
 
 my_app_id = 'YOUR_APP_ID'
 my_app_secret = 'YOUR_APP_SECRET'
