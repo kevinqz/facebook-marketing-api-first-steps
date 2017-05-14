@@ -1,5 +1,5 @@
 # Ignore my_facebook_access.py
-my_facebook_access.*
+my_facebook_access.py
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
