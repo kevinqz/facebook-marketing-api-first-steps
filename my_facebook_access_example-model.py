@@ -1,8 +1,10 @@
-# First of all, remove the "_example-model" on the file name by renaming it to just my_facebook_access.py
+# First of all, remove the "_example-model" on the filename by renaming it to just "my_facebook_access.py"
+# When you do this, the file will be ignored by the email, although it will be accessible by the codes on this repository.
+# Please change the info bellow to your own Facebook private information.
 
 # This code is used for some of our examples, so please download,
 # add your Facebook private information on the appropriate parameters
-# and place it in your Desktop
+# and place it on your Desktop
 
 # Note that I'm using Business Manager and pre-selected Campaign Ids!
 

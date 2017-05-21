@@ -7,7 +7,7 @@ from facebookads.adobjects.adsinsights import AdsInsights
 
 from datetime import date
 
-# Import getpass module to automatically discover my user:
+# Import getpass module to automatically discover your user:
 import getpass
 user = getpass.getuser()
 path = '/Users/' + user + '/Desktop/'
@@ -51,6 +51,10 @@ for each_campaign in selected_campaigns:
     selected_adsets = selected_campaign.get_ad_sets([
         AdSet.Field.id,
         AdSet.Field.name,
-        AdSet.Field.status
+        AdSet.Field.status,
+        AdSet.Field.optimization_goal,
+        AdSet.Field.billing_event,
+        AdSet.Field.bid_amount,
+        AdSet.Field.bid_info
     ])
     print(selected_adsets)

@@ -30,7 +30,6 @@ my_accounts = list(my_business.get_assigned_ad_accounts())
 
 selected_adaccount = my_accounts[0]
 print("Selected Ad Account:", selected_adaccount)
-
 """
 fields = [
     AdsInsights.Field.campaign_name,

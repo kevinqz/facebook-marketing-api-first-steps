@@ -7,10 +7,10 @@ from facebookads.adobjects.adsinsights import AdsInsights
 
 from datetime import date
 
-# Regex, for name search (Campaigns, Ad Sets, Ads)
+# Regex, for name search (Campaigns, Ad Sets, Ads):
 # import regex
 
-# Import getpass module to automatically discover my user:
+# Import getpass module to automatically discover your user:
 import getpass
 user = getpass.getuser()
 path = '/Users/' + user + '/Desktop/'
