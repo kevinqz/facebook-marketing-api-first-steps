@@ -1,0 +1,10 @@
+{
+  "app_id": "<YOUR_APP_ID>",
+  "app_secret": "<YOUR_APP_SECRET>",
+  "act_id": "<YOUR_ACCOUNT_ID>",
+  "campaign_id": "<YOUR_CAMPAIGN_ID>",
+  "page_id": "<YOUR_PAGE_ID>",
+  "access_token": "<YOUR_ACCESS_TOKEN>",
+  "promoted_object": "<YOUR_PROMOTED_OBJECT>",
+  "pixel_id": "<YOUR_PIXEL_ID>"
+}
