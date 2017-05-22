@@ -21,6 +21,19 @@
 """
 Creates an ad through a utility function.
 """
+# Import getpass module to automatically discover my user:
+
+import getpass
+user = getpass.getuser()
+path = '/Users/' + user + '/Desktop/'
+print('Selected path for your my_facebook_access.py:', path)
+
+# Import my_facebook_access.py file, located on your Desktop,
+# where you have to store your Facebook private information (see README.md):
+
+import sys
+sys.path.append(path)
+from my_facebook_access import my_app_id, my_app_secret, my_access_token, my_business_id, campaigns_group, my_conversion_id, my_adaccount_id
 
 from facebookads import FacebookAdsApi
 from facebookads import FacebookSession
@@ -35,32 +48,42 @@ import json
 import os
 
 this_dir = os.path.dirname(__file__)
+"""
 config_filename = os.path.join(this_dir, 'config.json')
 
 config_file = open(config_filename)
 config = json.load(config_file)
 config_file.close()
+"""
 
 ### Setup session and api objects
 session = FacebookSession(
-    config['app_id'],
-    config['app_secret'],
-    config['access_token'],
+    my_app_id,
+    my_app_secret,
+    my_access_token,
 )
 api = FacebookAdsApi(session)
 
 if __name__ == '__main__':
     FacebookAdsApi.set_default_api(api)
 
+    my_business = Business(fbid=my_business_id)
+    # print("my_business:", my_business)
+    my_accounts = list(my_business.get_assigned_ad_accounts())
+    # print("All accounts:", my_accounts)
+
+    selected_adaccount = my_accounts[1]
+
     # Get my account (first account associated with the user associated with the
     #                 session of the default api)
-    my_account = AdAccount(fbid=config['act_id'])
+    # my_account = AdAccount.get_my_account()
 
     print('**** Creating ad...')
 
     # Create my ad
     my_ad = ad_creation_utils.create_website_clicks_ad(
-        account=config['act_id'],
+        account=my_adaccount_id,
+        app_id=my_app_id,
 
         name="Visit Seattle",
         country='US',
@@ -69,21 +92,22 @@ if __name__ == '__main__':
         body="Beautiful Puget Sound.",
         url="http://www.seattle.gov/visiting/",
         image_path=os.path.join(
-            os.path.dirname(__file__),
-            os.pardir,
-            'facebookads/test/misc/image.png'
+            path,
+            path + '/test_image.jpg'
         ),
 
         optimization_goal=AdSet.OptimizationGoal.offsite_conversions,
-        pixel_id=config['pixel_id'],
+        promoted_object=my_conversion_id,
+
+
         billing_event=AdSet.BillingEvent.impressions,
-        bid_amount=53,  # $0.53 / thousand
-        daily_budget=1000,  # $10.00 per day
+        bid_amount=300,  # $3.00 / thousand, cpm
+        daily_budget=5000,  # $50.00 per day
 
-        age_min=13,
-        age_max=65,
+        age_min=18,
+        age_max=30,
 
-        campaign=config['campaign_id'],
+        campaign=campaigns_group,
         status=AdSet.Status.paused,  # Default is False but let's keep this test ad paused
     )
     print('**** Done!')
@@ -99,5 +123,6 @@ if __name__ == '__main__':
     )
     for each_ad in preview:
         preview_file.write(each_ad.get_html())
+
     preview_file.close()
     print('**** %s has been created!' % preview_filename)

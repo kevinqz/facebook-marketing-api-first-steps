@@ -33,7 +33,6 @@ from simple_create import api
 
 def create_multiple_website_clicks_ads(
     account,
-    app_id,
 
     name,
     country,
@@ -44,7 +43,7 @@ def create_multiple_website_clicks_ads(
     image_paths,
 
     optimization_goal,
-    promoted_object,
+    pixel_id,
     billing_event,
     bid_amount,
     daily_budget=None,
@@ -71,108 +70,98 @@ def create_multiple_website_clicks_ads(
             )
 
     # Create campaign
-    if not campaign:
-            each_campaign = Campaign(parent_id=account)
-            each_campaign[Campaign.Field.name] = name + ' Campaign'
-            each_campaign[Campaign.Field.objective] = \
-                Campaign.Objective.conversions
-            each_campaign[Campaign.Field.status] = \
-                Campaign.Status.active if not paused \
-                else Campaign.Status.paused
-            each_campaign.api_create()
+    if campaign:
+        campaign = Campaign(fbid=campaign)[Campaign.Field.id]
+    else:
+        campaign = Campaign(parent_id=account)
+        campaign[Campaign.Field.name] = name + ' Campaign'
+        campaign[Campaign.Field.objective] = \
+            Campaign.Objective.conversions
+        campaign[Campaign.Field.status] = \
+            Campaign.Status.active if not status \
+            else Campaign.Status.paused
+        campaign.remote_create()
+        campaign = campaign[AdSet.Field.id]
 
-    for each_campaign in campaign:
-        campaigns = Campaign(fbid=each_campaign)
+    # Create ad set
+    ad_set = AdSet(parent_id=account)
+    ad_set[AdSet.Field.campaign_id] = campaign
+    ad_set[AdSet.Field.name] = name + ' AdSet'
+    ad_set[AdSet.Field.optimization_goal] = optimization_goal
+    ad_set[AdSet.Field.promoted_object] = {
+        'pixel_id': pixel_id,
+        'custom_event_type': 'COMPLETE_REGISTRATION'
 
-        # Create ad set
-        ad_set = AdSet(parent_id=account)
-        each_campaign_id = ad_set[AdSet.Field.campaign_id] = each_campaign
-        ad_set[AdSet.Field.name] = name + ' AdSet2'
-        ad_set[AdSet.Field.optimization_goal] = optimization_goal
+    }
+    ad_set[AdSet.Field.billing_event] = billing_event
+    ad_set[AdSet.Field.bid_amount] = bid_amount
 
-        ad_set[AdSet.Field.promoted_object] = {
-            'pixel_id': '404668533048408',
-            # 'event_id': '279353649129616',
-            'custom_event_type': 'COMPLETE_REGISTRATION'
+    if daily_budget:
+        ad_set[AdSet.Field.daily_budget] = daily_budget
+    else:
+        ad_set[AdSet.Field.lifetime_budget] = lifetime_budget
+    if end_time:
+        ad_set[AdSet.Field.end_time] = end_time
+    if start_time:
+        ad_set[AdSet.Field.start_time] = start_time
+    targeting = {}
+    targeting[Targeting.Field.geo_locations] = {
+        'countries': [country]
+    }
+    if age_max:
+        targeting[Targeting.Field.age_max] = age_max
+    if age_min:
+        targeting[Targeting.Field.age_min] = age_min
+    if genders:
+        targeting[Targeting.Field.genders] = genders
+    ad_set[AdSet.Field.targeting] = targeting
 
-        }
+    ad_set.remote_create()
 
-        ad_set[AdSet.Field.billing_event] = billing_event
-        ad_set[AdSet.Field.bid_amount] = bid_amount
+    # Upload the images first one by one
+    image_hashes = []
+    for image_path in image_paths:
+        img = AdImage(parent_id=account)
+        img[AdImage.Field.filename] = image_path
+        img.remote_create()
+        image_hashes.append(img.get_hash())
 
-        if daily_budget:
-            ad_set[AdSet.Field.daily_budget] = daily_budget
-        else:
-            ad_set[AdSet.Field.lifetime_budget] = lifetime_budget
-        if end_time:
-            ad_set[AdSet.Field.end_time] = end_time
-        if start_time:
-            ad_set[AdSet.Field.start_time] = start_time
+    ADGROUP_BATCH_CREATE_LIMIT = 10
+    ad_groups_created = []
 
-        targeting = {}
-        targeting_geo_locations = {}
+    def callback_failure(response):
+        raise response.error()
 
-        targeting_geo_locations[TargetingGeoLocation.Field.countries] = country
-        targeting[Targeting.Field.geo_locations] = targeting_geo_locations
+    # For each creative permutation
+    for creative_info_batch in generate_batches(
+        itertools.product(titles, bodies, urls, image_hashes),
+        ADGROUP_BATCH_CREATE_LIMIT
+    ):
+        api_batch = api.new_batch()
 
-        if age_max:
-            targeting[Targeting.Field.age_max] = age_max
-        if age_min:
-            targeting[Targeting.Field.age_min] = age_min
-        if genders:
-            targeting[Targeting.Field.genders] = genders
-        ad_set[AdSet.Field.targeting] = targeting
+        for title, body, url, image_hash in creative_info_batch:
+            # Create the ad
+            ad = Ad(parent_id=account)
+            ad[Ad.Field.name] = name + ' Ad'
+            ad[Ad.Field.adset_id] = ad_set[AdSet.Field.id]
+            ad[Ad.Field.creative] = {
+                AdCreative.Field.title: title,
+                AdCreative.Field.body: body,
+                AdCreative.Field.object_url: url,
+                AdCreative.Field.image_hash: image_hash,
+            }
+            ad[Ad.Field.status] = status
 
-        ad_set[AdSet.Field.account_id] = account
-        ad_set.remote_create()
+            ad.remote_create(batch=api_batch, failure=callback_failure)
+            ad_groups_created.append(ad)
 
-        # Upload the images first one by one
-        image_hashes = []
-        for image_path in image_paths:
-            img = AdImage(parent_id=account)
-            img[AdImage.Field.filename] = image_path
-            img.remote_create()
-            image_hashes.append(img.get_hash())
-
-        ADGROUP_BATCH_CREATE_LIMIT = 10
-        ad_groups_created = []
-
-        def callback_failure(response):
-            raise response.error()
-
-        # For each creative permutation
-        for creative_info_batch in generate_batches(
-            itertools.product(titles, bodies, urls, image_hashes),
-            ADGROUP_BATCH_CREATE_LIMIT
-        ):
-            account_initiate = AdAccount(fbid=account)
-            api_batch = api.new_batch()
-
-            for title, body, url, image_hash in creative_info_batch:
-                # Create the ad
-                ad = Ad(parent_id=account)
-                ad[Ad.Field.name] = name + ' Ad'
-                ad[Ad.Field.adset_id] = ad_set[AdSet.Field.id]
-                ad[Ad.Field.creative] = {
-                    AdCreative.Field.title: title,
-                    AdCreative.Field.body: body,
-                    AdCreative.Field.object_url: url,
-                    AdCreative.Field.image_hash: image_hash,
-                }
-                ad[Ad.Field.status] = status
-
-                ad.remote_create(batch=api_batch, failure=callback_failure)
-
-                ad_groups_created.append(ad)
-
-            api_batch.execute()
+        api_batch.execute()
 
     return ad_groups_created
 
 
 def create_website_clicks_ad(
     account,
-    app_id,
 
     name,
     country,
@@ -183,7 +172,7 @@ def create_website_clicks_ad(
     image_path,
 
     optimization_goal,
-    promoted_object,
+    pixel_id,
     billing_event,
     bid_amount,
     daily_budget=None,
@@ -200,7 +189,6 @@ def create_website_clicks_ad(
 ):
     for ad in create_multiple_website_clicks_ads(
         account=account,
-        app_id=app_id,
 
         name=name,
         country=country,
@@ -211,7 +199,7 @@ def create_website_clicks_ad(
         image_paths=[image_path],
 
         optimization_goal=optimization_goal,
-        promoted_object=promoted_object,
+        pixel_id=pixel_id,
         billing_event=billing_event,
         bid_amount=bid_amount,
         daily_budget=daily_budget,
